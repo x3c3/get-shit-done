@@ -503,7 +503,7 @@ You're never locked in. The system adapts.
 |---------|--------------|
 | `/gsd:new-project [--auto]` | Full initialization: questions → research → requirements → roadmap |
 | `/gsd:discuss-phase [N] [--auto] [--analyze]` | Capture implementation decisions before planning (`--analyze` adds trade-off analysis) |
-| `/gsd:plan-phase [N] [--auto]` | Research + plan + verify for a phase |
+| `/gsd:plan-phase [N] [--auto] [--reviews]` | Research + plan + verify for a phase (`--reviews` loads codebase review findings) |
 | `/gsd:execute-phase <N>` | Execute all plans in parallel waves, verify when complete |
 | `/gsd:verify-work [N]` | Manual user acceptance testing ¹ |
 | `/gsd:ship [N] [--draft]` | Create PR from verified phase work with auto-generated body |
@@ -512,6 +512,25 @@ You're never locked in. The system adapts.
 | `/gsd:audit-milestone` | Verify milestone achieved its definition of done |
 | `/gsd:complete-milestone` | Archive milestone, tag release |
 | `/gsd:new-milestone [name]` | Start next version: questions → research → requirements → roadmap |
+| `/gsd:milestone-summary` | Generate onboarding summary from completed milestone artifacts |
+| `/gsd:forensics` | Post-mortem investigation of failed or stuck workflows |
+
+### Workstreams
+
+| Command | What it does |
+|---------|--------------|
+| `/gsd:workstreams list` | Show all workstreams and their status |
+| `/gsd:workstreams create <name>` | Create a namespaced workstream for parallel milestone work |
+| `/gsd:workstreams switch <name>` | Switch active workstream |
+| `/gsd:workstreams complete <name>` | Complete and merge a workstream |
+
+### Multi-Project Workspaces
+
+| Command | What it does |
+|---------|--------------|
+| `/gsd:new-workspace` | Create isolated workspace with repo copies (worktrees or clones) |
+| `/gsd:list-workspaces` | Show all GSD workspaces and their status |
+| `/gsd:remove-workspace` | Remove workspace and clean up worktrees |
 
 ### UI Design
 
@@ -633,6 +652,8 @@ These spawn additional agents during planning/execution. They improve quality bu
 | `workflow.verifier` | `true` | Confirms must-haves were delivered after execution |
 | `workflow.auto_advance` | `false` | Auto-chain discuss → plan → execute without stopping |
 | `workflow.research_before_questions` | `false` | Run research before discussion questions instead of after |
+| `workflow.skip_discuss` | `false` | Skip discuss-phase entirely in autonomous mode |
+| `workflow.discuss_mode` | `null` | Control discuss-phase behavior (`assumptions` uses inferred defaults) |
 
 Use `/gsd:settings` to toggle these, or override per-invocation:
 - `/gsd:plan-phase --skip-research`
