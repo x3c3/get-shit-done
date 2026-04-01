@@ -1112,60 +1112,44 @@ function convertClaudeAgentToWindsurfAgent(content) {
 // Augment (auggie CLI) uses a tool set similar to Cursor/Windsurf (VS Code-based).
 // Config lives in .augment/ (local) and ~/.augment/ (global).
 
-// Tool name mapping from Claude Code to Augment
 const claudeToAugmentTools = {
   Bash: 'launch-process',
   Edit: 'str-replace-editor',
-  AskUserQuestion: null, // No direct equivalent — use conversational prompting
-  SlashCommand: null,    // No equivalent — skills are auto-discovered
+  AskUserQuestion: null,
+  SlashCommand: null,
+  TodoWrite: 'add_tasks',
 };
 
-/**
- * Convert a Claude Code tool name to Augment format
- * @returns {string|null} Augment tool name, or null if tool should be excluded
- */
 function convertAugmentToolName(claudeTool) {
   if (claudeTool in claudeToAugmentTools) {
     return claudeToAugmentTools[claudeTool];
   }
-  // MCP tools keep their format (Augment supports MCP)
   if (claudeTool.startsWith('mcp__')) {
     return claudeTool;
   }
-  // Most tools share similar names
-  // Read → view (file viewing)
-  // Write → save-file
-  // Grep → codebase-retrieval
-  // Glob → view (directory listing)
-  // Task → use subagent spawning
-  // WebSearch → web-search
-  // WebFetch → web-fetch
-  // TodoWrite → write-todos
   const toolMapping = {
     Read: 'view',
     Write: 'save-file',
     Glob: 'view',
-    Grep: 'codebase-retrieval',
-    Task: null, // Use subagent spawning instead
+    Grep: 'grep',
+    Task: null,
     WebSearch: 'web-search',
     WebFetch: 'web-fetch',
-    TodoWrite: 'write-todos',
   };
   return toolMapping[claudeTool] || claudeTool;
 }
 
 function convertSlashCommandsToAugmentSkillMentions(content) {
-  // Keep leading "/" for slash commands; only normalize gsd: -> gsd-.
   return content.replace(/gsd:/gi, 'gsd-');
 }
 
 function convertClaudeToAugmentMarkdown(content) {
   let converted = convertSlashCommandsToAugmentSkillMentions(content);
-  // Replace tool name references in body text
   converted = converted.replace(/\bBash\(/g, 'launch-process(');
   converted = converted.replace(/\bEdit\(/g, 'str-replace-editor(');
   converted = converted.replace(/\bRead\(/g, 'view(');
   converted = converted.replace(/\bWrite\(/g, 'save-file(');
+  converted = converted.replace(/\bTodoWrite\(/g, 'add_tasks(');
   converted = converted.replace(/\bAskUserQuestion\b/g, 'conversational prompting');
   // Replace subagent_type from Claude to Augment format
   converted = converted.replace(/subagent_type="general-purpose"/g, 'subagent_type="generalPurpose"');
@@ -1203,9 +1187,9 @@ Use these Augment tools when executing GSD workflows:
 - \`str-replace-editor\` for editing existing files
 - \`view\` for reading files and listing directories
 - \`save-file\` for creating new files
-- \`codebase-retrieval\` for searching code
+- \`grep\` for searching code (or use MCP servers for advanced search)
 - \`web-search\`, \`web-fetch\` for web queries
-- \`write-todos\` for task management
+- \`add_tasks\`, \`view_tasklist\`, \`update_tasks\` for task management
 
 ## D. Subagent Spawning
 When the workflow needs to spawn a subagent:
