@@ -299,6 +299,8 @@ export type { FileSpec } from './context-engine.js';
 export { truncateMarkdown, extractCurrentMilestone, DEFAULT_TRUNCATION_OPTIONS } from './context-truncation.js';
 export type { TruncationOptions } from './context-truncation.js';
 export { getToolsForPhase, PHASE_AGENT_MAP, PHASE_DEFAULT_TOOLS } from './tool-scoping.js';
+export { checkResearchGate } from './research-gate.js';
+export type { ResearchGateResult } from './research-gate.js';
 export { PromptFactory, extractBlock, extractSteps, PHASE_WORKFLOW_MAP } from './phase-prompt.js';
 export { GSDLogger } from './logger.js';
 export type { LogLevel, LogEntry, GSDLoggerOptions } from './logger.js';
