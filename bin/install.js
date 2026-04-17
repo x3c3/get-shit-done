@@ -80,6 +80,11 @@ const hasPortableHooks = args.includes('--portable-hooks') || process.env.GSD_PO
 const hasSdk = args.includes('--sdk');
 const hasNoSdk = args.includes('--no-sdk');
 
+if (hasSdk && hasNoSdk) {
+  console.error(`  ${yellow}Cannot specify both --sdk and --no-sdk${reset}`);
+  process.exit(1);
+}
+
 // Runtime selection - can be set by flags or interactive prompt
 let selectedRuntimes = [];
 if (hasAll) {
